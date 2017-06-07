@@ -36,4 +36,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="msg_1" />
+    <string name="userinfo_txt_wechat_no">直播号</string>
+    <string name="addcontact_send_msg_prefix">我是</string>
 </resources>
