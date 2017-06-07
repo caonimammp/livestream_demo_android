@@ -8,10 +8,16 @@ import cn.ucai.live.data.restapi.model.LiveStatusModule;
 import cn.ucai.live.data.restapi.model.ResponseModule;
 import cn.ucai.live.data.restapi.model.StatisticsType;
 import com.hyphenate.chat.EMClient;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import cn.ucai.live.utils.I;
+import cn.ucai.live.utils.LiveService;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -19,9 +25,11 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import org.json.JSONException;
 import org.json.JSONObject;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * Created by wei on 2017/2/14.
@@ -32,7 +40,7 @@ public class LiveManager {
     private ApiService apiService;
 
     private static LiveManager instance;
-
+    private LiveService liveService;
     private LiveManager(){
         try {
             ApplicationInfo appInfo = LiveApplication.getInstance().getPackageManager().getApplicationInfo(
@@ -58,6 +66,14 @@ public class LiveManager {
 
         apiService = retrofit.create(ApiService.class);
 
+        Retrofit liveretrofit = new Retrofit.Builder()
+                .baseUrl(I.SERVER_ROOT)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .client(httpClient)
+                .build();
+
+        liveService = liveretrofit.create(LiveService.class);
+
     }
 
 
@@ -82,7 +98,24 @@ public class LiveManager {
         }
         return instance;
     }
+    String result = "";
+    public String register(String userName, String nickName, String passWord, File file){
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/otcet-stream"), file);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("face", file.getName(), requestBody);
+        Call<String> call = liveService.register(userName, nickName, passWord, part);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                 result= response.body();
+            }
 
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+        return result;
+    }
     /**
      * 创建直播室
      * @param name 直播室名称
