@@ -15,6 +15,7 @@ import com.hyphenate.exceptions.HyphenateException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.ucai.live.utils.MD5;
 
 public class RegisterActivity extends BaseActivity {
 
@@ -54,7 +55,7 @@ public class RegisterActivity extends BaseActivity {
                     @Override
                     public void run() {
                         try {
-                            EMClient.getInstance().createAccount(username.getText().toString(), password.getText().toString());
+                            EMClient.getInstance().createAccount(username.getText().toString(), MD5.getMessageDigest(password.getText().toString()));
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
