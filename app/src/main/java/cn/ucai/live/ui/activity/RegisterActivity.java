@@ -101,7 +101,7 @@ public class RegisterActivity extends BaseActivity {
                                     public void run() {
                                         pd.dismiss();
                                         showToast("注册成功");
-                                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class).putExtra("username",username.getText().toString()));
                                         finish();
                                     }
                                 });

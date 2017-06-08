@@ -128,7 +128,6 @@ public class LiveManager {
                 throw new LiveException(response.code(),response.body());
             }else {
                 String body = response.body();
-                Log.i("main","mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm:"+body);
                 Result<User> result = ResultUtils.getListResultFromJson(body, User.class);
                 if (result!=null){
                     return result.isRetMsg();

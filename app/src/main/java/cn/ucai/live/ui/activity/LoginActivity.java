@@ -16,7 +16,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import cn.LiveHelper;
 import cn.ucai.live.R;
+import cn.ucai.live.data.restapi.LiveManager;
+import cn.ucai.live.utils.L;
 import cn.ucai.live.utils.MD5;
 
 import com.hyphenate.EMCallBack;
@@ -45,6 +49,7 @@ public class LoginActivity extends BaseActivity {
     setContentView(R.layout.activity_login);
     // Set up the login form.
     mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+//    String username = getIntent().getStringExtra("username");
 
     mPasswordView = (EditText) findViewById(R.id.password);
     mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -78,6 +83,14 @@ public class LoginActivity extends BaseActivity {
 
   }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    String username1 = LiveHelper.getInstance().getCurrentUsernName();
+    if(username1!=null){
+      mEmailView.setText(username1);
+    }
+  }
 
   /**
    * Attempts to sign in or register the account specified by the login form.
