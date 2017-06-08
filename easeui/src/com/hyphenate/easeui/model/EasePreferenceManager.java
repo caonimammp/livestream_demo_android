@@ -73,4 +73,9 @@ public class EasePreferenceManager {
     public String getCurrentUsername(){
         return mUserSharedPreferences.getString(SHARED_KEY_CURRENTUSER_USERNAME, null);
     }
+    public void removeCurrentUserInfo() {
+               userEditor.remove(SHARED_KEY_CURRENTUSER_NICK);
+               userEditor.remove(SHARED_KEY_CURRENTUSER_AVATAR);
+               userEditor.apply();
+           }
 }

@@ -9,9 +9,11 @@ import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.easeui.controller.EaseUI;
+import com.hyphenate.easeui.model.EasePreferenceManager;
 import com.hyphenate.util.EMLog;
 
 import cn.ucai.live.LiveConstants;
+import cn.ucai.live.data.model.User;
 import cn.ucai.live.ui.activity.MainActivity;
 
 /**
@@ -24,6 +26,7 @@ public class LiveHelper {
     private String username;
     private Context appContext;
     public static final String TAG = "LiveHelper";
+    private User currentAppUser;
 
     public LiveHelper() {
     }
@@ -82,5 +85,8 @@ public class LiveHelper {
         intent.putExtra(exception, true);
         appContext.startActivity(intent);
     }
-
+    public synchronized void reset() {
+              currentAppUser = null;
+              EasePreferenceManager.getInstance().removeCurrentUserInfo();
+          }
 }
