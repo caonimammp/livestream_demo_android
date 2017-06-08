@@ -34,4 +34,6 @@ public interface LiveService {
             @Query("m_user_password")String password,
             @Part MultipartBody.Part file
     );
+    @GET("live/unRegister")
+    Call<String> unRegister(@Query("uname") String username);
 }

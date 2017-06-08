@@ -2,8 +2,12 @@ package cn.ucai.live.data.restapi;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.util.Log;
+
 import cn.ucai.live.LiveApplication;
 import cn.ucai.live.data.model.LiveRoom;
+import cn.ucai.live.data.model.Result;
+import cn.ucai.live.data.model.User;
 import cn.ucai.live.data.restapi.model.LiveStatusModule;
 import cn.ucai.live.data.restapi.model.ResponseModule;
 import cn.ucai.live.data.restapi.model.StatisticsType;
@@ -15,6 +19,7 @@ import java.util.List;
 
 import cn.ucai.live.utils.I;
 import cn.ucai.live.utils.LiveService;
+import cn.ucai.live.utils.ResultUtils;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -98,23 +103,44 @@ public class LiveManager {
         }
         return instance;
     }
-    String result = "";
-    public String register(String userName, String nickName, String passWord, File file){
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/otcet-stream"), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("face", file.getName(), requestBody);
+    public void unRegister(String userName){
+        Call<String> call = liveService.unRegister(userName);
+        Response<String> response = null;
+        try {
+            response = call.execute();
+            if (!response.isSuccessful()) {
+                throw new LiveException(response.code(), response.body());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }catch (LiveException e){
+            e.printStackTrace();
+        }
+    }
+
+    public boolean register(String userName, String nickName, String passWord, File file){
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/form-data"), file);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
         Call<String> call = liveService.register(userName, nickName, passWord, part);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                 result= response.body();
+        try {
+            Response<String> response = call.execute();
+            if (!response.isSuccessful()){
+                throw new LiveException(response.code(),response.body());
+            }else {
+                String body = response.body();
+                Log.i("main","mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm:"+body);
+                Result<User> result = ResultUtils.getListResultFromJson(body, User.class);
+                if (result!=null){
+                    return result.isRetMsg();
+                }
             }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-
-            }
-        });
-        return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (LiveException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     /**
      * 创建直播室

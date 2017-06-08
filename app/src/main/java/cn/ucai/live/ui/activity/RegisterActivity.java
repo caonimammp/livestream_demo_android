@@ -92,18 +92,22 @@ public class RegisterActivity extends BaseActivity {
                     @Override
                     public void run() {
                         try {
-                            LiveManager.getInstance().register(username.getText().toString(),nick.getText().toString(),
-                                    MD5.getMessageDigest(password.getText().toString()),avatarFile);
-                            EMClient.getInstance().createAccount(username.getText().toString(), MD5.getMessageDigest(password.getText().toString()));
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    pd.dismiss();
-                                    showToast("注册成功");
-                                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                                    finish();
-                                }
-                            });
+                            boolean isScuccess = LiveManager.getInstance().register(username.getText().toString(), nick.getText().toString(),
+                                    MD5.getMessageDigest(password.getText().toString()), avatarFile);
+                            if(isScuccess){
+                                EMClient.getInstance().createAccount(username.getText().toString(), MD5.getMessageDigest(password.getText().toString()));
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        pd.dismiss();
+                                        showToast("注册成功");
+                                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                                        finish();
+                                    }
+                                });
+                            }else {
+                                LiveManager.getInstance().unRegister(username.getText().toString());
+                            }
                         } catch (final HyphenateException e) {
                             e.printStackTrace();
                             runOnUiThread(new Runnable() {
