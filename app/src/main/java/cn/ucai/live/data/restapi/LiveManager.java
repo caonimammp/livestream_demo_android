@@ -2,7 +2,6 @@ package cn.ucai.live.data.restapi;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
 import cn.ucai.live.LiveApplication;
 import cn.ucai.live.data.model.LiveRoom;
@@ -18,7 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 import cn.ucai.live.utils.I;
-import cn.ucai.live.utils.LiveService;
+import cn.ucai.live.data.LiveService;
 import cn.ucai.live.utils.ResultUtils;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -30,7 +29,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import org.json.JSONException;
 import org.json.JSONObject;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

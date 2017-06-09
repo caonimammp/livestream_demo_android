@@ -7,4 +7,5 @@ import com.hyphenate.chat.EMContact;
  */
 
 public class User extends EMContact{
+
 }

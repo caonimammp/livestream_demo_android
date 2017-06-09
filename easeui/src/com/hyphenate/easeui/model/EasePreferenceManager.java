@@ -11,7 +11,6 @@ public class EasePreferenceManager {
     private SharedPreferences.Editor editor;
     private SharedPreferences mSharedPreferences;
     private static final String KEY_AT_GROUPS = "AT_GROUPS";
-
     public static final String PREFERENCE_NAME = "saveInfo";
     private  SharedPreferences mUserSharedPreferences;
     private  SharedPreferences.Editor userEditor;
