@@ -4,10 +4,21 @@ import android.content.Context;
 
 import com.hyphenate.easeui.model.EasePreferenceManager;
 
+import java.util.Map;
+
+import cn.ucai.live.data.local.LiveDao;
+import cn.ucai.live.data.model.Gift;
+
 /**
  * Created by Administrator on 2017/6/8.
  */
 public class LiveModel {
+    LiveDao dao ;
+    protected Context context=null;
+
+    public LiveModel() {
+    }
+
     /**
      * save current username
      * @param username
@@ -16,7 +27,12 @@ public class LiveModel {
         EasePreferenceManager.getInstance().setCurrentUserName(username);
     }
 
-    public String getCurrentUsernName(){
+    public String getCurrentUserName(){
         return EasePreferenceManager.getInstance().getCurrentUsername();
+    }
+
+    public Map<Integer,Gift> getGiftList() {
+        dao = new LiveDao();
+        return dao.getGiftList();
     }
 }

@@ -41,7 +41,8 @@ public class LiveApplication extends Application{
     //options.setRestServer("103.241.230.122:31080");
     //options.setIMServer("103.241.230.122");
     //options.setImPort(31097);
-    LiveHelper.getInstance().init(this);
+    LiveHelper.getInstance().init(instance);
+    LiveHelper.getInstance().getGiftListFromServer();
 
 //    EaseUI.getInstance().init(this, null);
 //    EMClient.getInstance().setDebugMode(true);

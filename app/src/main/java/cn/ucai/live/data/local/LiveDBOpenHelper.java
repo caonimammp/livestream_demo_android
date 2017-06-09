@@ -13,6 +13,12 @@ import cn.LiveHelper;
 public class LiveDBOpenHelper extends SQLiteOpenHelper{
     private static final int DATABASE_VERSION = 1;
     private static LiveDBOpenHelper instance ;
+    private static final String GIFT_TABLE_CREATE = "CREATE TABLE "
+            + LiveDao.GIFT_TABLE_NAME + " ("
+            + LiveDao.GIFT_COLUMN_NAME + " TEXT, "
+            + LiveDao.GIFT_COLUMN_URL + " TEXT, "
+            + LiveDao.GIFT_COLUMN_PRICE + " INTEGER, "
+            + LiveDao.GIFT_COLUMN_ID + " TEXT PRIMARY KEY);";
     public LiveDBOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -23,7 +29,7 @@ public class LiveDBOpenHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        db.execSQL(GIFT_TABLE_CREATE);
     }
     private static String getUserDatabaseName() {
         return  LiveHelper.getInstance().getCurrentUsernName() + "_demo.db";
@@ -37,7 +43,7 @@ public class LiveDBOpenHelper extends SQLiteOpenHelper{
         if(instance==null){
             instance = new LiveDBOpenHelper(context.getApplicationContext());
         }
-        return null;
+        return instance;
     }
     public void closeDB(){
         if(instance!=null){
