@@ -15,6 +15,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.LiveHelper;
 import cn.ucai.live.data.restapi.LiveManager;
 import cn.ucai.live.ucloud.AVOption;
 
@@ -22,6 +23,8 @@ import cn.ucai.live.R;
 
 import cn.ucai.live.data.restapi.LiveException;
 import cn.ucai.live.ucloud.LiveCameraView;
+import cn.ucai.live.utils.L;
+
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMChatRoom;
 import com.hyphenate.chat.EMClient;
@@ -255,6 +258,12 @@ public class LiveAnchorActivity extends LiveBaseActivity {
         // register the event listener when enter the foreground
         EMClient.getInstance().chatManager().addMessageListener(msgListener);
     }
+    @Override
+        protected void loadAnchor(String anchorId) {
+            L.e(TAG,"loadAnchor.....anchorId="+anchorId);
+            liveRoom.setNickName(LiveHelper.getInstance().getCurrentAppUserInfo().getMUserNick());
+            L.e(TAG,"loadAnchor.....liveRoom.getnick="+liveRoom.getNickName());
+        }
 
     @Override public void onStop() {
         super.onStop();

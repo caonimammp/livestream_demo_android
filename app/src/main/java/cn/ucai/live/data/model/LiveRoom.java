@@ -1,6 +1,7 @@
 package cn.ucai.live.data.model;
 
 import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
@@ -107,4 +108,13 @@ public class LiveRoom implements Serializable {
     //public void setShowId(String showId) {
     //    this.showId = showId;
     //}
+    private String nickName;
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
 }
