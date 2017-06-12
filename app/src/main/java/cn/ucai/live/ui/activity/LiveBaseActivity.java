@@ -460,10 +460,11 @@ public abstract class LiveBaseActivity extends BaseActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 int size = chatroom.getMemberCount();
-                audienceNumView.setText(String.valueOf(size));
-                membersCount = memberList.size();
+                membersCount = liveRoom.getAudienceNum()+1;
                 //观看人数不包含主播
+                showMember();
                 watchedCount = membersCount - 1;
+                audienceNumView.setText(String.valueOf(size));
                 notifyDataSetChanged();
             }
 
@@ -472,6 +473,19 @@ public abstract class LiveBaseActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void showMember() {
+        if(chatroom!=null){
+            memberList.addAll(chatroom.getMemberList());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    audienceNumView.setText(String.valueOf(membersCount));
+                    notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     private synchronized void onRoomMemberAdded(String name) {
