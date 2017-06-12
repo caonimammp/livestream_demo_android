@@ -24,6 +24,9 @@ import cn.ucai.live.utils.Utils;
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMChatRoom;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.utils.EaseUserUtils;
+import com.hyphenate.easeui.widget.EaseImageView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +37,7 @@ public class RoomUserDetailsDialog extends DialogFragment {
 
     Unbinder unbinder;
     @BindView(R.id.tv_username) TextView usernameView;
+    @BindView(R.id.detailAvatar) EaseImageView userAvatarView;
     @BindView(R.id.btn_set_admin) Button setAdminButton;
     @BindView(R.id.layout_management) RelativeLayout managementLayout;
 
@@ -84,6 +88,7 @@ public class RoomUserDetailsDialog extends DialogFragment {
         }
         if (username != null) {
             usernameView.setText(username);
+            EaseUserUtils.setAppUserAvatar(getContext(),username,userAvatarView);
         }
         //mentionBtn.setText("@TA");
     }
