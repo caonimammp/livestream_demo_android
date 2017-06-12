@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -460,7 +461,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
             public void onSuccess(Void aVoid) {
                 int size = chatroom.getMemberCount();
                 audienceNumView.setText(String.valueOf(size));
-                membersCount = size;
+                membersCount = memberList.size();
                 //观看人数不包含主播
                 watchedCount = membersCount - 1;
                 notifyDataSetChanged();
@@ -503,7 +504,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
     }
 
     private synchronized void onRoomMemberExited(final String name) {
-        memberList.remove(name);
+        if(memberList.remove(name))
         membersCount--;
         EMLog.e(TAG, name + "exited");
         runOnUiThread(new Runnable() {
@@ -583,10 +584,12 @@ public abstract class LiveBaseActivity extends BaseActivity {
                 }
             });
             //暂时使用测试数据
-            Glide.with(context)
-                    .load(avatarRepository.getAvatar())
-                    .placeholder(R.drawable.ease_default_avatar)
-                    .into(holder.Avatar);
+//            Glide.with(context)
+//                    .load(avatarRepository.getAvatar())
+//                    .placeholder(R.drawable.ease_default_avatar)
+//                    .into(holder.Avatar);
+            EaseUserUtils.setAppUserAvatar(LiveBaseActivity.this,namelist.get(position),holder.Avatar);
+
         }
 
         @Override
