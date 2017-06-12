@@ -20,6 +20,8 @@ import cn.ucai.live.R;
 import com.hyphenate.chat.EMChatRoom;
 import com.hyphenate.chat.EMChatRoomManager;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.utils.EaseUserUtils;
+import com.hyphenate.easeui.widget.EaseImageView;
 import com.hyphenate.exceptions.HyphenateException;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +122,7 @@ public class RoomUserManagementFragment extends Fragment {
         private ManagementType type;
         private Context context;
         private List<String> userList;
+        private EaseImageView avatar;
 
         public ManagementAdapter(Context context, List<String> userList, ManagementType type){
             this.userList = userList;
@@ -138,6 +141,7 @@ public class RoomUserManagementFragment extends Fragment {
             switch (type) {
                 case ADMIN:
                     EMChatRoom chatRoom = chatRoomManager.getChatRoom(chatroomId);
+                    EaseUserUtils.setAppUserAvatar(getContext(),username,avatar);
                     if(chatRoom.getAdminList().contains(EMClient.getInstance().getCurrentUser())){
                        holder.managerButton.setVisibility(View.INVISIBLE);
                     }else {
@@ -190,6 +194,7 @@ public class RoomUserManagementFragment extends Fragment {
     static class ManagementViewHolder extends RecyclerView.ViewHolder{
         @BindView(R.id.txt_usernick) TextView usernickView;
         @BindView(R.id.btn_manager) TextView managerButton;
+        @BindView(R.id.avatar) EaseImageView avatar;
 
         public ManagementViewHolder(View itemView) {
             super(itemView);
