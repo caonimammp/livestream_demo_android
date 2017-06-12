@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v4.app.DialogFragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,11 +20,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.ucai.live.R;
+import cn.ucai.live.data.LiveService;
 import cn.ucai.live.data.model.LiveRoom;
+import cn.ucai.live.data.restapi.LiveException;
+import cn.ucai.live.data.restapi.LiveManager;
 import cn.ucai.live.utils.Utils;
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMChatRoom;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.hyphenate.easeui.widget.EaseImageView;
 
@@ -87,9 +92,28 @@ public class RoomUserDetailsDialog extends DialogFragment {
             }
         }
         if (username != null) {
-            usernameView.setText(username);
             EaseUserUtils.setAppUserAvatar(getContext(),username,userAvatarView);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        final User user = LiveManager.getInstance().loadUserInfo(username);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                usernameView.setText(user.getMUserNick());
+                            }
+                        });
+
+                    } catch (LiveException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+//            EaseUserUtils.setUserNick(,usernameView);
         }
+
         //mentionBtn.setText("@TA");
     }
 

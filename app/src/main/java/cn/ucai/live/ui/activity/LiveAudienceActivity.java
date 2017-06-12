@@ -39,6 +39,7 @@ import com.ucloud.uvod.UMediaProfile;
 import com.ucloud.uvod.UPlayerStateListener;
 import com.ucloud.uvod.widget.UVideoView;
 
+import java.lang.ref.SoftReference;
 import java.util.Random;
 
 public class LiveAudienceActivity extends LiveBaseActivity implements UPlayerStateListener {
@@ -55,7 +56,6 @@ public class LiveAudienceActivity extends LiveBaseActivity implements UPlayerSta
     TextView loadingText;
     @BindView(R.id.cover_image)
     ImageView coverView;
-
     @Override
     protected void loadAnchor(String anchorId) {
         L.e(TAG, "loadAnchor.....anchorId=" + anchorId);
