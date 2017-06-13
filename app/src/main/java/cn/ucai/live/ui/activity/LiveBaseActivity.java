@@ -16,8 +16,10 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.LiveHelper;
 import cn.ucai.live.LiveConstants;
 import cn.ucai.live.ThreadPoolManager;
+import cn.ucai.live.data.model.Gift;
 import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.ui.widget.PeriscopeLayout;
 import cn.ucai.live.ui.widget.RoomMessagesView;
@@ -545,10 +547,14 @@ public abstract class LiveBaseActivity extends BaseActivity {
 
     @OnClick(R.id.user_manager_image)
     void showUserList() {
-        RoomUserManagementDialog managementDialog = new RoomUserManagementDialog(chatroomId);
+        RoomUserManagementDialog managementDialog = RoomUserManagementDialog.newInstance(chatroomId);
         managementDialog.show(getSupportFragmentManager(), "RoomUserManagementDialog");
     }
-
+    @OnClick(R.id.tv_GiftList)
+    void showGiftList(){
+        RoomGiftDialog roomgiftDialog =RoomGiftDialog.newInstance();
+        roomgiftDialog.show(getSupportFragmentManager(), "RoomGiftDialog");
+    }
     //@OnClick(R.id.present_image) void onPresentImageClick() {
     //  EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CMD);
     //  message.setTo(chatroomId);
@@ -611,7 +617,9 @@ public abstract class LiveBaseActivity extends BaseActivity {
             return namelist.size();
         }
     }
-
+    private void sendGift(int giftId){
+        Gift gift = LiveHelper.getInstance().getGiftList().get(giftId);
+    }
     static class AvatarViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.avatar)
         ImageView Avatar;

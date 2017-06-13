@@ -138,10 +138,11 @@ public class RoomUserManagementFragment extends Fragment {
         @Override public void onBindViewHolder(ManagementViewHolder holder, final int position) {
             final String username = userList.get(position);
             holder.usernickView.setText(username);
+            EaseUserUtils.setAppUserNick(username,holder.usernickView);
+            EaseUserUtils.setAppUserAvatar(getContext(),username,holder.avatar);
             switch (type) {
                 case ADMIN:
                     EMChatRoom chatRoom = chatRoomManager.getChatRoom(chatroomId);
-                    EaseUserUtils.setAppUserAvatar(getContext(),username,avatar);
                     if(chatRoom.getAdminList().contains(EMClient.getInstance().getCurrentUser())){
                        holder.managerButton.setVisibility(View.INVISIBLE);
                     }else {
@@ -194,7 +195,7 @@ public class RoomUserManagementFragment extends Fragment {
     static class ManagementViewHolder extends RecyclerView.ViewHolder{
         @BindView(R.id.txt_usernick) TextView usernickView;
         @BindView(R.id.btn_manager) TextView managerButton;
-        @BindView(R.id.avatar) EaseImageView avatar;
+        @BindView(R.id.img_avatar) EaseImageView avatar;
 
         public ManagementViewHolder(View itemView) {
             super(itemView);

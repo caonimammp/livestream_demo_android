@@ -13,6 +13,7 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import cn.ucai.live.LiveConstants;
 import cn.ucai.live.ThreadPoolManager;
 import cn.ucai.live.data.restapi.LiveManager;
@@ -56,6 +57,8 @@ public class LiveAudienceActivity extends LiveBaseActivity implements UPlayerSta
     TextView loadingText;
     @BindView(R.id.cover_image)
     ImageView coverView;
+
+    Unbinder bind;
     @Override
     protected void loadAnchor(String anchorId) {
         L.e(TAG, "loadAnchor.....anchorId=" + anchorId);
@@ -82,7 +85,7 @@ public class LiveAudienceActivity extends LiveBaseActivity implements UPlayerSta
     @Override
     protected void onActivityCreate(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_live_audience);
-        ButterKnife.bind(this);
+        bind = ButterKnife.bind(this);
 
         switchCameraView.setVisibility(View.INVISIBLE);
         likeImageView.setVisibility(View.VISIBLE);

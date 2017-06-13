@@ -12,8 +12,13 @@ import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.model.EasePreferenceManager;
 import com.hyphenate.util.EMLog;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +45,7 @@ public class LiveHelper {
     LiveModel model = null;
     private User currentAppUser= null;
     private Map<Integer,Gift> giftMap;
+    private List<Gift> giftList;
     private EaseUI easeUI;
 
     private LiveHelper() {
@@ -216,7 +222,27 @@ public class LiveHelper {
 
         return giftMap;
     }
-
+    public List<Gift> getGiftLists(){
+        if(giftList==null) {
+            if (getGiftList().size() > 0) {
+                giftList = new ArrayList<>();
+                Iterator<Map.Entry<Integer, Gift>> iterator = giftMap.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    giftList.add(iterator.next().getValue());
+                }
+                Collections.sort(giftList, new Comparator<Gift>() {
+                    @Override
+                    public int compare(Gift o1, Gift o2) {
+                        return o1.getGprice() - o2.getGprice();
+                    }
+                });
+            }
+        }
+        if(giftList==null){
+            giftList = new ArrayList<>();
+        }
+        return giftList;
+    }
     public void getGiftListFromServer(){
         L.e(TAG,"getGiftListFromServer...");
         new Thread(new Runnable() {
