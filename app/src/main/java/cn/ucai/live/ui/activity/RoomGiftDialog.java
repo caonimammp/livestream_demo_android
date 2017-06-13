@@ -48,9 +48,7 @@ public class RoomGiftDialog extends DialogFragment {
     @BindView(R.id.tv_recharge)
     TextView tvRecharge;
     Unbinder unbinder;
-    private String chatroomId;
-    TabLayout tabLayout;
-    ViewPager viewPager;
+    static View.OnClickListener mOnClickListener;
     private GridLayoutManager mGridLayoutManager;
     private LivegiftAdapter adapter;
     List<Gift> list;
@@ -87,7 +85,6 @@ public class RoomGiftDialog extends DialogFragment {
         list = LiveHelper.getInstance().getGiftLists();
         Log.e("main","````````````````````"+list.size());
         if (list != null) {
-            initView();
             initData();
         } else {
             // down load gift list
@@ -96,14 +93,12 @@ public class RoomGiftDialog extends DialogFragment {
 //        setupViewPager();
 //        tabLayout.setupWithViewPager(viewPager);
     }
-
-    private void initView() {
-
-    }
+    public static void setOnClickListener(View.OnClickListener listener){
+             mOnClickListener = listener;
+        }
 
     private void initData() {
         mGridLayoutManager = new GridLayoutManager(getContext(), 4);
-        Log.i("main",list.size()+"数量数量数量数量数量数量数量数量数量数量");
         adapter = new LivegiftAdapter(list, getContext());
         rvGift.setLayoutManager(mGridLayoutManager);
         rvGift.setAdapter(adapter);
@@ -133,11 +128,12 @@ public class RoomGiftDialog extends DialogFragment {
         @Override
         public void onBindViewHolder(GiftViewHolder holder, int position) {
             Gift gift = mlist.get(position);
-            Log.e("main","onBindViewHolder"+gift);
             if (gift != null) {
                 holder.tvGiftName.setText(gift.getGname());
                 holder.tvGiftPrice.setText("￥" + gift.getGprice());
                 EaseUserUtils.setGiftAvatar(context, gift.getGurl(), holder.ivGiftThumb);
+                holder.itemView.setTag(gift.getId());
+                holder.itemView.setOnClickListener(mOnClickListener);
             }
         }
 
