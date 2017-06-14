@@ -14,6 +14,7 @@ public class EasePreferenceManager {
     public static final String PREFERENCE_NAME = "saveInfo";
     private  SharedPreferences mUserSharedPreferences;
     private  SharedPreferences.Editor userEditor;
+    private static String SHARED_KEY_CURRENTUSER_isshow = "SHARED_KEY_CURRENTUSER_ISSHOW";
     private static String SHARED_KEY_CURRENTUSER_USERNAME = "SHARED_KEY_CURRENTUSER_USERNAME";
     private static String SHARED_KEY_CURRENTUSER_NICK = "SHARED_KEY_CURRENTUSER_NICK";
     private static String SHARED_KEY_CURRENTUSER_AVATAR = "SHARED_KEY_CURRENTUSER_AVATAR";
@@ -61,6 +62,13 @@ public class EasePreferenceManager {
     }
     public String getCurrentUserNick() {
         return mUserSharedPreferences.getString(SHARED_KEY_CURRENTUSER_NICK, null);
+    }
+    public void setShowDialog(boolean isShow){
+        userEditor.putBoolean(SHARED_KEY_CURRENTUSER_isshow, isShow);
+        userEditor.apply();
+    }
+    public boolean getShowDialog() {
+        return mUserSharedPreferences.getBoolean(SHARED_KEY_CURRENTUSER_isshow, false);
     }
 
     public String getCurrentUserAvatar() {
