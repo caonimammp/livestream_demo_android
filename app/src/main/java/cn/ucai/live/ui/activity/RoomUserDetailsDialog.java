@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -24,6 +27,7 @@ import cn.ucai.live.data.LiveService;
 import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.data.restapi.LiveException;
 import cn.ucai.live.data.restapi.LiveManager;
+import cn.ucai.live.utils.CommonUtils;
 import cn.ucai.live.utils.Utils;
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMChatRoom;
@@ -220,6 +224,7 @@ public class RoomUserDetailsDialog extends DialogFragment {
 
     private void showToast(final String toast) {
         Utils.showToast(getActivity(), toast);
+
     }
 
 
@@ -235,7 +240,6 @@ public class RoomUserDetailsDialog extends DialogFragment {
 
     public interface RoomManageEventListener{
         void onKickMember(String username);
-
         void onAddBlacklist(String username);
 
     }
