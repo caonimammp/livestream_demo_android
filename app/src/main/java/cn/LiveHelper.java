@@ -263,7 +263,7 @@ public class LiveHelper {
                             setGiftList(map);
                             //save data to databases
                             LiveDao dao = new LiveDao();
-                            dao.setGIftList(list);
+                            dao.setGiftList(list);
                         }
                     } catch (LiveException e) {
                         e.printStackTrace();

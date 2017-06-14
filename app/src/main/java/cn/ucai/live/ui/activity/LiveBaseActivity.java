@@ -1,6 +1,8 @@
 package cn.ucai.live.ui.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -10,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,6 +48,7 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMCmdMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
+import com.hyphenate.easeui.model.EasePreferenceManager;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.hyphenate.easeui.widget.EaseImageView;
 import com.hyphenate.exceptions.HyphenateException;
@@ -112,7 +117,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
 
     volatile boolean isGiftShowing = false;
     volatile boolean isGift2Showing = false;
-    List<String> toShowList = Collections.synchronizedList(new LinkedList<String>());
+    List<EMMessage> toShowList = Collections.synchronizedList(new LinkedList<EMMessage>());
 
     protected EMChatRoom chatroom;
     private static final int MAX_SIZE = 10;
@@ -302,7 +307,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
         public void onCmdMessageReceived(List<EMMessage> messages) {
             EMMessage message = messages.get(messages.size() - 1);
             if (LiveConstants.CMD_GIFT.equals(((EMCmdMessageBody) message.getBody()).action())) {
-                showLeftGiftView(message.getFrom());
+                showLeftGiftView(message);
             } else if (LiveConstants.CMD_PRAISE.equals(((EMCmdMessageBody) message.getBody()).action())) {
                 showPraise(message.getIntAttribute(LiveConstants.EXTRA_PRAISE_COUNT, 1));
             }
@@ -564,20 +569,23 @@ public abstract class LiveBaseActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 int giftId = (int) view.getTag();
-                sendGift(giftId);
+                showSendDialogPre(giftId);
+//                sendGift(giftId);
             }
         });
         roomgiftDialog.show(getSupportFragmentManager(), "RoomGiftDialog");
     }
 
-    private void onPresentImageClick() {
+    private void onPresentImageClick(int giftId) {
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CMD);
         message.setTo(chatroomId);
+        message.setAttribute(I.User.NICK,LiveHelper.getInstance().getCurrentAppUserInfo().getMUserNick());
+        message.setAttribute(LiveConstants.CMD_GIFT,giftId);
         EMCmdMessageBody cmdMessageBody = new EMCmdMessageBody(LiveConstants.CMD_GIFT);
         message.addBody(cmdMessageBody);
         message.setChatType(EMMessage.ChatType.ChatRoom);
         EMClient.getInstance().chatManager().sendMessage(message);
-        showLeftGiftView(EMClient.getInstance().getCurrentUser());
+        showLeftGiftView(message);
     }
     //@OnClick(R.id.present_image) void onPresentImageClick() {
     //  EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CMD);
@@ -641,10 +649,45 @@ public abstract class LiveBaseActivity extends BaseActivity {
             return namelist.size();
         }
     }
+    private void showSendDialogPre(int giftId){
+        if(EasePreferenceManager.getInstance().getShowDialog()){
+            sendGift(giftId);
+        }else {
+            showSendDialog(giftId);
+        }
+    }
+    private void showSendDialog(int giftId){
+        Gift gift = LiveHelper.getInstance().getGiftList().get(giftId);
+        CheckBox cb = new CheckBox(LiveBaseActivity.this);
+        cb.setText("不再提醒");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("提示")
+                .setMessage("你确定打赏"+gift.getGname()+"吗？")
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setView(cb)
+                .show();
+        cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                EasePreferenceManager.getInstance().setShowDialog(isChecked);
+            }
+        });
+    }
     private void sendGift(int giftId) {
         Gift gift = LiveHelper.getInstance().getGiftList().get(giftId);
-        onPresentImageClick();
+        onPresentImageClick(giftId);
+
     }
 
     static class AvatarViewHolder extends RecyclerView.ViewHolder {
@@ -657,22 +700,21 @@ public abstract class LiveBaseActivity extends BaseActivity {
         }
     }
 
-    protected synchronized void showLeftGiftView(String name) {
+    protected synchronized void showLeftGiftView(EMMessage message) {
         if (!isGift2Showing) {
-            showGift2Direct(name);
+            showGift2Direct(message);
         } else if (!isGiftShowing) {
-            showGift1Direct(name);
+            showGift1Direct(message);
         } else {
-            toShowList.add(name);
+            toShowList.add(message);
         }
     }
 
-    private void showGift1Direct(final String name) {
+    private void showGift1Direct(final EMMessage message) {
         isGiftShowing = true;
-        animateGiftView(name, leftGiftView, new AnimationListener.Stop() {
-            @Override
-            public void onStop() {
-                String pollName = null;
+        animateGiftView(message, leftGiftView, new AnimationListener.Stop() {
+            @Override public void onStop() {
+                EMMessage pollName = null;
                 try {
                     pollName = toShowList.remove(0);
                 } catch (Exception e) {
@@ -687,12 +729,11 @@ public abstract class LiveBaseActivity extends BaseActivity {
         });
     }
 
-    private void showGift2Direct(final String name) {
+    private void showGift2Direct(final EMMessage message) {
         isGift2Showing = true;
-        animateGiftView(name, leftGiftView2, new AnimationListener.Stop() {
-            @Override
-            public void onStop() {
-                String pollName = null;
+        animateGiftView(message, leftGiftView2, new AnimationListener.Stop() {
+            @Override public void onStop() {
+                EMMessage pollName = null;
                 try {
                     pollName = toShowList.remove(0);
                 } catch (Exception e) {
@@ -707,29 +748,38 @@ public abstract class LiveBaseActivity extends BaseActivity {
         });
     }
 
-
-    private void animateGiftView(final String name, final LiveLeftGiftView giftView, final AnimationListener.Stop animationStop) {
-          runOnUiThread(new Runnable() {
-                  @Override public void run() {
-                    giftView.setVisibility(View.VISIBLE);
-                    giftView.setName(name);
-                    giftView.setTranslationY(0);
-                    ViewAnimator.animate(giftView)
-                                    .alpha(0, 1)
-                                    .translationX(-giftView.getWidth(), 0)
-                                    .duration(600)
-                                    .thenAnimate(giftView)
-                                    .alpha(1, 0)
-                                    .translationY(-1.5f * giftView.getHeight())
-                                    .duration(800)
-                                    .onStop(animationStop)
-                                    .startDelay(2000)
-                                    .start();
-                    ViewAnimator.animate(giftView.getGiftImageView())
-                                    .translationX(-giftView.getGiftImageView().getX(), 0)
-                                    .duration(1100)
-                                    .start();
-         }
-              });
-      }
+    private void animateGiftView(final EMMessage message, final LiveLeftGiftView giftView, final AnimationListener.Stop animationStop) {
+        runOnUiThread(new Runnable() {
+            @Override public void run() {
+                int giftId = 0;
+                String nick = message.getFrom();
+                try {
+                    giftId = message.getIntAttribute(LiveConstants.CMD_GIFT,0);
+                    nick = message.getStringAttribute(I.User.NICK);
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                }
+                giftView.setVisibility(View.VISIBLE);
+                giftView.setName(nick);
+                giftView.setAvatar(message.getFrom());
+                giftView.setGift(giftId);
+                giftView.setTranslationY(0);
+                ViewAnimator.animate(giftView)
+                        .alpha(0, 1)
+                        .translationX(-giftView.getWidth(), 0)
+                        .duration(600)
+                        .thenAnimate(giftView)
+                        .alpha(1, 0)
+                        .translationY(-1.5f * giftView.getHeight())
+                        .duration(800)
+                        .onStop(animationStop)
+                        .startDelay(2000)
+                        .start();
+                ViewAnimator.animate(giftView.getGiftImageView())
+                        .translationX(-giftView.getGiftImageView().getX(), 0)
+                        .duration(1100)
+                        .start();
+            }
+        });
+    }
 }
