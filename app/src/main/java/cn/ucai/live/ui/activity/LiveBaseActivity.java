@@ -24,6 +24,7 @@ import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.ui.widget.LiveLeftGiftView;
 import cn.ucai.live.ui.widget.PeriscopeLayout;
 import cn.ucai.live.ui.widget.RoomMessagesView;
+import cn.ucai.live.utils.I;
 import cn.ucai.live.utils.L;
 import cn.ucai.live.utils.Utils;
 
@@ -59,8 +60,10 @@ import java.util.List;
 public abstract class LiveBaseActivity extends BaseActivity {
     protected static final String TAG = "LiveActivity";
 
-    @BindView(R.id.left_gift_view1) LiveLeftGiftView leftGiftView;
-    @BindView(R.id.left_gift_view2) LiveLeftGiftView leftGiftView2;
+    @BindView(R.id.left_gift_view1)
+    LiveLeftGiftView leftGiftView;
+    @BindView(R.id.left_gift_view2)
+    LiveLeftGiftView leftGiftView2;
     @BindView(R.id.message_view)
     RoomMessagesView messageView;
     @BindView(R.id.periscope_layout)
@@ -465,7 +468,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 int size = chatroom.getMemberCount();
-                membersCount = liveRoom.getAudienceNum()+1;
+                membersCount = liveRoom.getAudienceNum() + 1;
                 //观看人数不包含主播
                 showMember();
                 watchedCount = membersCount - 1;
@@ -481,7 +484,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
     }
 
     private void showMember() {
-        if(chatroom!=null){
+        if (chatroom != null) {
             memberList.addAll(chatroom.getMemberList());
             runOnUiThread(new Runnable() {
                 @Override
@@ -523,8 +526,8 @@ public abstract class LiveBaseActivity extends BaseActivity {
     }
 
     private synchronized void onRoomMemberExited(final String name) {
-        if(memberList.remove(name))
-        membersCount--;
+        if (memberList.remove(name))
+            membersCount--;
         EMLog.e(TAG, name + "exited");
         runOnUiThread(new Runnable() {
             @Override
@@ -553,28 +556,29 @@ public abstract class LiveBaseActivity extends BaseActivity {
         RoomUserManagementDialog managementDialog = RoomUserManagementDialog.newInstance(chatroomId);
         managementDialog.show(getSupportFragmentManager(), "RoomUserManagementDialog");
     }
+
     @OnClick(R.id.tv_GiftList)
-    void showGiftList(){
-        RoomGiftDialog roomgiftDialog =RoomGiftDialog.newInstance();
+    void showGiftList() {
+        RoomGiftDialog roomgiftDialog = RoomGiftDialog.newInstance();
         RoomGiftDialog.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                        int giftId = (int) view.getTag();
-                        sendGift(giftId);
-                    }
-            });
+            @Override
+            public void onClick(View view) {
+                int giftId = (int) view.getTag();
+                sendGift(giftId);
+            }
+        });
         roomgiftDialog.show(getSupportFragmentManager(), "RoomGiftDialog");
     }
 
     private void onPresentImageClick() {
-          EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CMD);
-          message.setTo(chatroomId);
-          EMCmdMessageBody cmdMessageBody = new EMCmdMessageBody(LiveConstants.CMD_GIFT);
-          message.addBody(cmdMessageBody);
-          message.setChatType(EMMessage.ChatType.ChatRoom);
-          EMClient.getInstance().chatManager().sendMessage(message);
-          showLeftGiftView(EMClient.getInstance().getCurrentUser());
-        }
+        EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CMD);
+        message.setTo(chatroomId);
+        EMCmdMessageBody cmdMessageBody = new EMCmdMessageBody(LiveConstants.CMD_GIFT);
+        message.addBody(cmdMessageBody);
+        message.setChatType(EMMessage.ChatType.ChatRoom);
+        EMClient.getInstance().chatManager().sendMessage(message);
+        showLeftGiftView(EMClient.getInstance().getCurrentUser());
+    }
     //@OnClick(R.id.present_image) void onPresentImageClick() {
     //  EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CMD);
     //  message.setTo(chatroomId);
@@ -628,7 +632,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
 //                    .load(avatarRepository.getAvatar())
 //                    .placeholder(R.drawable.ease_default_avatar)
 //                    .into(holder.Avatar);
-            EaseUserUtils.setAppUserAvatar(LiveBaseActivity.this,namelist.get(position),holder.Avatar);
+            EaseUserUtils.setAppUserAvatar(LiveBaseActivity.this, namelist.get(position), holder.Avatar);
 
         }
 
@@ -637,9 +641,12 @@ public abstract class LiveBaseActivity extends BaseActivity {
             return namelist.size();
         }
     }
-    private void sendGift(int giftId){
+
+    private void sendGift(int giftId) {
         Gift gift = LiveHelper.getInstance().getGiftList().get(giftId);
+        onPresentImageClick();
     }
+
     static class AvatarViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.avatar)
         ImageView Avatar;
@@ -649,76 +656,80 @@ public abstract class LiveBaseActivity extends BaseActivity {
             ButterKnife.bind(this, itemView);
         }
     }
+
     protected synchronized void showLeftGiftView(String name) {
         if (!isGift2Showing) {
-                showGift2Direct(name);
-            } else if (!isGiftShowing) {
-                showGift1Direct(name);
-            } else {
-                toShowList.add(name);
-            }
-   }
+            showGift2Direct(name);
+        } else if (!isGiftShowing) {
+            showGift1Direct(name);
+        } else {
+            toShowList.add(name);
+        }
+    }
 
-       private void showGift1Direct(final String name) {
-       isGiftShowing = true;
-       animateGiftView(name, leftGiftView, new AnimationListener.Stop() {
-               @Override public void onStop() {
-            String pollName = null;
-            try {
+    private void showGift1Direct(final String name) {
+        isGiftShowing = true;
+        animateGiftView(name, leftGiftView, new AnimationListener.Stop() {
+            @Override
+            public void onStop() {
+                String pollName = null;
+                try {
                     pollName = toShowList.remove(0);
                 } catch (Exception e) {
 
-                        }
-            if (pollName != null) {
+                }
+                if (pollName != null) {
                     showGift1Direct(pollName);
                 } else {
                     isGiftShowing = false;
                 }
-                }
-         });
- }
+            }
+        });
+    }
 
-     private void showGift2Direct(final String name) {
-     isGift2Showing = true;
-     animateGiftView(name, leftGiftView2, new AnimationListener.Stop() {
-             @Override public void onStop() {
+    private void showGift2Direct(final String name) {
+        isGift2Showing = true;
+        animateGiftView(name, leftGiftView2, new AnimationListener.Stop() {
+            @Override
+            public void onStop() {
                 String pollName = null;
                 try {
-                        pollName = toShowList.remove(0);
-                    } catch (Exception e) {
+                    pollName = toShowList.remove(0);
+                } catch (Exception e) {
 
-                            }
+                }
                 if (pollName != null) {
-                        showGift2Direct(pollName);
-                    } else {
-                        isGift2Showing = false;
+                    showGift2Direct(pollName);
+                } else {
+                    isGift2Showing = false;
+                }
             }
-                     }
-             });
-   }
+        });
+    }
 
-       private void animateGiftView(final String name, final LiveLeftGiftView giftView, final AnimationListener.Stop animationStop) {
-       runOnUiThread(new Runnable() {
-           @Override public void run() {
-                   giftView.setVisibility(View.VISIBLE);
-                   giftView.setName(name);
-                   giftView.setTranslationY(0);
-                   ViewAnimator.animate(giftView)
-                                   .alpha(0, 1)
-                                   .translationX(-giftView.getWidth(), 0)
-                                   .duration(600)
-                                   .thenAnimate(giftView)
-                                   .alpha(1, 0)
-                                   .translationY(-1.5f * giftView.getHeight())
-                                   .duration(800)
-                       .onStop(animationStop)
-                                     .startDelay(2000)
-                                     .start();
-                     ViewAnimator.animate(giftView.getGiftImageView())
-                                     .translationX(-giftView.getGiftImageView().getX(), 0)
-                                     .duration(1100)
-                                     .start();
-                 }
-                });
-        }
+
+    private void animateGiftView(final String name, final LiveLeftGiftView giftView, final AnimationListener.Stop animationStop) {
+          runOnUiThread(new Runnable() {
+                  @Override public void run() {
+                    giftView.setVisibility(View.VISIBLE);
+                    giftView.setName(name);
+                    giftView.setTranslationY(0);
+                    ViewAnimator.animate(giftView)
+                                    .alpha(0, 1)
+                                    .translationX(-giftView.getWidth(), 0)
+                                    .duration(600)
+                                    .thenAnimate(giftView)
+                                    .alpha(1, 0)
+                                    .translationY(-1.5f * giftView.getHeight())
+                                    .duration(800)
+                                    .onStop(animationStop)
+                                    .startDelay(2000)
+                                    .start();
+                    ViewAnimator.animate(giftView.getGiftImageView())
+                                    .translationX(-giftView.getGiftImageView().getX(), 0)
+                                    .duration(1100)
+                                    .start();
+         }
+              });
+      }
 }
