@@ -119,12 +119,10 @@ public class EaseUserUtils {
     public static void setAppGift(Context context, String giftPath, ImageView imageView){
         if(giftPath != null){
             try {
-//                int avatarResId = Integer.parseInt(giftPath);
+
                 Glide.with(context).load(giftPath).into(imageView);
             } catch (Exception e) {
                 //use default avatar
-//                Glide.with(context).load(R.drawable.gift_default).diskCacheStrategy(DiskCacheStrategy.ALL)
-//                        .placeholder(R.drawable.gift_default).into(imageView);
             }
         }else{
             Glide.with(context).load(R.drawable.gift_default).into(imageView);
